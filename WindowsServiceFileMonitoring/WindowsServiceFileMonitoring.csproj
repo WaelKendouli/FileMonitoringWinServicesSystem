@@ -58,6 +58,7 @@
     <Compile Include="FileMonitoringService.Designer.cs">
       <DependentUpon>FileMonitoringService.cs</DependentUpon>
     </Compile>
+    <Compile Include="clsFilesMonitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -43,13 +43,14 @@ namespace WindowsServiceFileMonitoring
 
         private void OnFileAdded(object sender, FileSystemEventArgs e)
         {
+            Log($"File was created at :{e.FullPath}");
             string sourceFilePath = this.sourcePath;
             string sourceFileName = Path.GetFileName(e.FullPath);
             string NewFileName = Guid.NewGuid().ToString() + Path.GetExtension(e.FullPath);
             try
             {
                 File.Copy(Path.Combine(sourceFilePath, sourceFileName), Path.Combine(destinationPath, NewFileName), true);    
-                    Log($"File {sourceFileName} copied to {NewFileName} successfully.");
+                    Log($"File {sourceFileName} copied to {NewFileName} successfully with New GUID [{NewFileName}].");
             }
             catch (Exception ex)
             {
