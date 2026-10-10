@@ -8,6 +8,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using System.IO;
 
 namespace WindowsServiceFileMonitoring
 {
@@ -27,12 +28,14 @@ namespace WindowsServiceFileMonitoring
             string LogsPath = ConfigurationManager.AppSettings["LogFolder"];
 
             clsFilesMonitor monitor = new clsFilesMonitor(src, dist, LogsPath);
+            monitor.Log("Service started");
             monitor.StartMonitoring();
            
         }
 
         protected override void OnStop()
         {
+            File.AppendAllText(Path.Combine(ConfigurationManager.AppSettings["LogFolder"], "FileMonitoringLog.txt"), $"[{DateTime.UtcNow}] Service stopped\n");
         }
     }
 }

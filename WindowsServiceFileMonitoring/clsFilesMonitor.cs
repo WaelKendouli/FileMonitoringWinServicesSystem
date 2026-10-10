@@ -30,16 +30,47 @@ namespace WindowsServiceFileMonitoring
         }
 
 
-        private void Log(string message) {
+        public void Log(string message) {
             string FullLogPath = Path.Combine(this.logsPath , this.LogsFileName);
 
             if (!File.Exists(FullLogPath))
             {
                 File.Create(FullLogPath).Dispose();
             }
-            File.WriteAllText(FullLogPath, $"[{DateTime.UtcNow}] {message}");
+            File.AppendAllText(FullLogPath, $"[{DateTime.UtcNow}] {message}\n");
         }
 
+        private void DetectDeletionOfFile(object sender, FileSystemEventArgs e)
+        {
+            try
+            { 
+                Log($"Source file deleted: {e.FullPath}");
+            }
+            catch (Exception ex)
+            {
+                Log($"Error deleting source file {e.FullPath}: {ex.Message}");
+            }
+        }
+
+        private void DeleteFile(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    Log($"File deleted: {filePath}");
+                }
+                else
+                {
+                    Log($"File not found for deletion: {filePath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error deleting file {filePath}: {ex.Message}");
+            }
+        }
 
         private void OnFileAdded(object sender, FileSystemEventArgs e)
         {
@@ -50,7 +81,8 @@ namespace WindowsServiceFileMonitoring
             try
             {
                 File.Copy(Path.Combine(sourceFilePath, sourceFileName), Path.Combine(destinationPath, NewFileName), true);    
-                    Log($"File {sourceFileName} copied to {NewFileName} successfully with New GUID [{NewFileName}].");
+                    Log($"File {sourceFileName} copied to {this.destinationPath} successfully with New GUID [{NewFileName}].");
+                    DeleteFile(Path.Combine(sourceFilePath, sourceFileName));
             }
             catch (Exception ex)
             {
@@ -61,6 +93,7 @@ namespace WindowsServiceFileMonitoring
         public void StartMonitoring()
         {
             watcher.Created += OnFileAdded;
+            watcher.Deleted += DetectDeletionOfFile;
         }
 
     }
