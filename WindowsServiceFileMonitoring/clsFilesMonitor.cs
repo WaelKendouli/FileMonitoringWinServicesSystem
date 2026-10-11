@@ -96,5 +96,12 @@ namespace WindowsServiceFileMonitoring
             watcher.Deleted += DetectDeletionOfFile;
         }
 
+        public void StopMonitoring()
+        {
+            watcher.Created -= OnFileAdded;
+            watcher.Deleted -= DetectDeletionOfFile;
+            watcher.Dispose();
+            watcher.EnableRaisingEvents = false;
+        }
     }
 }

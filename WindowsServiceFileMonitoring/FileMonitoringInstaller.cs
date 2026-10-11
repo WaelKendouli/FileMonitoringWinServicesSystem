@@ -30,7 +30,8 @@ namespace WindowsServiceFileMonitoring
             {
                 ServiceName = "FileMonitoringService", // Must match the ServiceName in your ServiceBase class
                 DisplayName = "File Monitoring Service",
-                StartType = ServiceStartMode.Manual // Or Automatic, depending on requirements
+                StartType = ServiceStartMode.Manual,
+                ServicesDependedOn = new string[] { "RpcSs" , "Eventlog" , "LanmanWorkstation" }
             };
 
             // Add installers to the installer collection

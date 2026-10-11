@@ -14,6 +14,7 @@ namespace WindowsServiceFileMonitoring
 {
     public partial class FileMonitoringService : ServiceBase
     {
+        clsFilesMonitor monitor;
         public FileMonitoringService()
         {
             InitializeComponent();
@@ -27,7 +28,7 @@ namespace WindowsServiceFileMonitoring
             string dist = ConfigurationManager.AppSettings["DestinationFolder"];
             string LogsPath = ConfigurationManager.AppSettings["LogFolder"];
 
-            clsFilesMonitor monitor = new clsFilesMonitor(src, dist, LogsPath);
+            monitor = new clsFilesMonitor(src, dist, LogsPath);
             monitor.Log("Service started");
             monitor.StartMonitoring();
            
@@ -35,7 +36,9 @@ namespace WindowsServiceFileMonitoring
 
         protected override void OnStop()
         {
+            monitor.StopMonitoring();
             File.AppendAllText(Path.Combine(ConfigurationManager.AppSettings["LogFolder"], "FileMonitoringLog.txt"), $"[{DateTime.UtcNow}] Service stopped\n");
+
         }
     }
 }
